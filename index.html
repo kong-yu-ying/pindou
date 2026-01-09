@@ -2,8 +2,8 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>拼豆色号查找工具 - 带颜色显示</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <title>拼豆色号查找工具</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
@@ -17,69 +17,82 @@
             background-color: #f5f7fa;
             color: #333;
             line-height: 1.6;
-            padding: 20px;
+            padding: 15px;
             min-height: 100vh;
         }
         
         .container {
             max-width: 1400px;
             margin: 0 auto;
+            width: 100%;
         }
         
         header {
             text-align: center;
-            margin-bottom: 30px;
-            padding-bottom: 20px;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
             border-bottom: 2px solid #e0e6ed;
         }
         
         h1 {
             color: #2c3e50;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
+            font-size: 1.8rem;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 15px;
+            gap: 12px;
+            flex-wrap: wrap;
         }
         
         h1 i {
             color: #3498db;
+            font-size: 1.6rem;
         }
         
         .subtitle {
             color: #7f8c8d;
-            font-size: 1.1rem;
+            font-size: 1rem;
+            padding: 0 10px;
         }
         
         .search-section {
             background-color: white;
-            border-radius: 12px;
-            padding: 25px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-            margin-bottom: 30px;
+            border-radius: 10px;
+            padding: 20px 15px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            margin-bottom: 20px;
         }
         
         .search-container {
             display: flex;
-            gap: 15px;
-            align-items: center;
-            flex-wrap: wrap;
+            flex-direction: column;
+            gap: 12px;
+            align-items: stretch;
             position: relative;
+        }
+        
+        @media (min-width: 768px) {
+            .search-container {
+                flex-direction: row;
+                align-items: center;
+            }
         }
         
         .search-input-wrapper {
             flex: 1;
-            min-width: 250px;
+            width: 100%;
             position: relative;
         }
         
         .search-input {
             width: 100%;
-            padding: 15px 45px 15px 20px;
+            padding: 14px 45px 14px 15px;
             border: 2px solid #e0e6ed;
-            border-radius: 10px;
-            font-size: 1.1rem;
+            border-radius: 8px;
+            font-size: 1rem;
             transition: all 0.3s;
+            -webkit-appearance: none;
         }
         
         .search-input:focus {
@@ -90,15 +103,20 @@
         
         .clear-search {
             position: absolute;
-            right: 15px;
+            right: 12px;
             top: 50%;
             transform: translateY(-50%);
             background: none;
             border: none;
             color: #999;
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             cursor: pointer;
             display: none;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         
         .clear-search:hover {
@@ -109,15 +127,25 @@
             background-color: #3498db;
             color: white;
             border: none;
-            border-radius: 10px;
-            padding: 15px 30px;
-            font-size: 1.1rem;
+            border-radius: 8px;
+            padding: 14px 20px;
+            font-size: 1rem;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s;
             display: flex;
             align-items: center;
-            gap: 10px;
+            justify-content: center;
+            gap: 8px;
+            width: 100%;
+            min-height: 50px;
+        }
+        
+        @media (min-width: 768px) {
+            .search-btn {
+                width: auto;
+                min-width: 140px;
+            }
         }
         
         .search-btn:hover {
@@ -126,20 +154,24 @@
             box-shadow: 0 5px 10px rgba(52, 152, 219, 0.3);
         }
         
+        /* 示例色号左对齐 */
         .example {
-            margin-top: 15px;
+            margin-top: 12px;
             color: #7f8c8d;
-            font-size: 0.95rem;
+            font-size: 0.9rem;
+            text-align: left;
+            padding: 0 5px;
         }
         
         .example span {
             background-color: #f8f9fa;
             padding: 3px 8px;
             border-radius: 5px;
-            margin: 0 5px;
+            margin: 0 4px 5px 0;
             font-family: monospace;
             cursor: pointer;
             transition: background-color 0.2s;
+            display: inline-block;
         }
         
         .example span:hover {
@@ -148,10 +180,10 @@
         
         .history-section {
             background-color: white;
-            border-radius: 12px;
-            padding: 20px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-            margin-bottom: 30px;
+            border-radius: 10px;
+            padding: 15px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            margin-bottom: 20px;
             display: none;
         }
         
@@ -159,17 +191,17 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 15px;
+            margin-bottom: 12px;
             padding-bottom: 10px;
             border-bottom: 1px solid #e0e6ed;
         }
         
         .history-title {
             color: #2c3e50;
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
         }
         
         .clear-history {
@@ -177,13 +209,14 @@
             color: #7f8c8d;
             border: none;
             border-radius: 6px;
-            padding: 8px 15px;
-            font-size: 0.9rem;
+            padding: 6px 12px;
+            font-size: 0.85rem;
             cursor: pointer;
             transition: all 0.3s;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
+            white-space: nowrap;
         }
         
         .clear-history:hover {
@@ -194,19 +227,20 @@
         .history-items {
             display: flex;
             flex-wrap: wrap;
-            gap: 10px;
+            gap: 8px;
+            justify-content: flex-start;
         }
         
         .history-item {
             background-color: #f8f9fa;
-            padding: 8px 15px;
-            border-radius: 20px;
-            font-size: 0.95rem;
+            padding: 7px 12px;
+            border-radius: 18px;
+            font-size: 0.9rem;
             cursor: pointer;
             transition: all 0.3s;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
             border: 1px solid #e0e6ed;
         }
         
@@ -217,8 +251,8 @@
         }
         
         .history-color {
-            width: 12px;
-            height: 12px;
+            width: 10px;
+            height: 10px;
             border-radius: 50%;
             display: inline-block;
         }
@@ -226,130 +260,207 @@
         .results-section {
             display: none;
             background-color: white;
-            border-radius: 12px;
-            padding: 25px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-            margin-bottom: 30px;
+            border-radius: 10px;
+            padding: 20px 15px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            margin-bottom: 20px;
         }
         
         .results-header {
             display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
+            flex-direction: column;
+            gap: 15px;
+            margin-bottom: 15px;
             padding-bottom: 15px;
             border-bottom: 1px solid #e0e6ed;
         }
         
+        /* 查找结果区域左对齐 */
+        .result-title-container {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            width: 100%;
+        }
+        
+        @media (min-width: 576px) {
+            .result-title-container {
+                flex-direction: row;
+                align-items: center;
+                justify-content: flex-start;
+                gap: 15px;
+            }
+        }
+        
+        /* 优化查找结果色号样式 - 只显示色号 */
         .result-title {
             color: #2c3e50;
-            font-size: 1.5rem;
+            font-size: 1.3rem;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 5px;
+            margin-right: 15px;
         }
         
         .result-color {
             font-weight: bold;
-            color: #3498db;
+            color: #ffffff;
+            background-color: #3498db;
+            padding: 4px 10px;
+            border-radius: 6px;
+            box-shadow: 0 2px 4px rgba(52, 152, 219, 0.3);
+            display: inline-block;
+            margin: 0 5px;
+            min-width: 60px;
+            text-align: center;
         }
         
-        /* 优化后的结果信息区域 */
+        /* 结果信息区域 - 紧凑布局左对齐 */
         .result-info {
             display: flex;
-            flex-wrap: wrap;
-            gap: 15px;
-            margin-bottom: 25px;
+            flex-direction: row;
+            flex-wrap: nowrap;
+            gap: 10px;
+            margin-bottom: 20px;
             background-color: #f8f9fa;
-            padding: 20px;
-            border-radius: 10px;
+            padding: 15px;
+            border-radius: 8px;
+            justify-content: flex-start;
             align-items: center;
-            justify-content: space-between;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: thin;
+        }
+        
+        /* 隐藏滚动条但保持滚动功能 */
+        .result-info::-webkit-scrollbar {
+            height: 4px;
+        }
+        
+        .result-info::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 2px;
+        }
+        
+        .result-info::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 2px;
+        }
+        
+        .result-info::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8;
         }
         
         .info-item {
             display: flex;
             flex-direction: column;
             align-items: center;
-            min-width: 120px;
-            padding: 15px;
+            padding: 10px 15px;
             background-color: white;
             border-radius: 8px;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
-            flex: 1;
+            flex: 0 0 auto;
+            min-width: 100px;
+        }
+        
+        @media (max-width: 480px) {
+            .info-item {
+                min-width: 90px;
+                padding: 8px 10px;
+            }
+        }
+        
+        @media (max-width: 380px) {
+            .info-item {
+                min-width: 85px;
+                padding: 7px 8px;
+            }
         }
         
         .info-label {
             color: #7f8c8d;
-            font-size: 0.9rem;
-            margin-bottom: 8px;
+            font-size: 0.8rem;
+            margin-bottom: 4px;
             font-weight: 500;
+            white-space: nowrap;
         }
         
         .info-value {
             color: #2c3e50;
-            font-size: 1.5rem;
+            font-size: 1.2rem;
             font-weight: 700;
             display: flex;
             align-items: center;
-            gap: 5px;
+            gap: 4px;
+            white-space: nowrap;
         }
         
+        /* 移除颜色预览区域 */
         .color-preview {
-            width: 100%;
-            height: 60px;
-            border-radius: 8px;
-            margin-top: 10px;
-            border: 1px solid #ddd;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            color: #333;
-            text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.8);
-            font-size: 0.9rem;
+            display: none;
         }
         
         .visualization-section {
-            margin-top: 20px;
+            margin-top: 15px;
         }
         
         .box-container {
             display: flex;
             flex-direction: column;
             align-items: center;
-            margin-bottom: 40px;
+            margin-bottom: 30px;
+            width: 100%;
         }
         
         .box-title {
-            font-size: 1.8rem;
+            font-size: 1.5rem;
             color: #2c3e50;
-            margin-bottom: 15px;
-            padding: 10px 20px;
+            margin-bottom: 12px;
+            padding: 8px 16px;
             background-color: #ecf0f1;
             border-radius: 8px;
             width: fit-content;
+            text-align: center;
         }
         
         .box-grid {
             display: grid;
             grid-template-columns: repeat(6, 1fr);
-            gap: 8px;
+            gap: 6px;
             margin-bottom: 10px;
+            width: 100%;
+            max-width: 500px;
         }
         
         .cell {
-            width: 80px;
-            height: 80px;
+            width: 100%;
+            aspect-ratio: 1/1;
             display: flex;
-            flex-direction: column;
             align-items: center;
             justify-content: center;
-            border-radius: 8px;
+            border-radius: 6px;
             font-weight: 600;
-            font-size: 0.95rem;
+            font-size: 0.9rem;
             transition: all 0.3s;
             position: relative;
-            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
             overflow: hidden;
-            padding: 5px;
+            padding: 3px;
+            text-align: center;
+        }
+        
+        @media (max-width: 480px) {
+            .cell {
+                font-size: 0.8rem;
+            }
+        }
+        
+        @media (max-width: 380px) {
+            .cell {
+                font-size: 0.7rem;
+            }
         }
         
         .empty-cell {
@@ -370,23 +481,19 @@
             z-index: 2;
         }
         
+        /* 移除单元格中的HEX代码显示 */
         .cell-hex {
-            font-size: 0.7rem;
-            margin-top: 3px;
-            background: rgba(255, 255, 255, 0.7);
-            padding: 1px 4px;
-            border-radius: 3px;
-            font-weight: normal;
+            display: none;
         }
         
         .coordinates {
             position: absolute;
             bottom: 3px;
             right: 3px;
-            font-size: 0.7rem;
+            font-size: 0.65rem;
             color: rgba(0, 0, 0, 0.7);
             background: rgba(255, 255, 255, 0.7);
-            padding: 1px 4px;
+            padding: 1px 3px;
             border-radius: 3px;
         }
         
@@ -394,88 +501,55 @@
             display: flex;
             flex-direction: column;
             align-items: center;
+            width: 100%;
         }
         
         .no-results {
             text-align: center;
-            padding: 40px;
+            padding: 30px 15px;
             color: #7f8c8d;
         }
         
         .no-results i {
-            font-size: 3rem;
-            margin-bottom: 15px;
+            font-size: 2.5rem;
+            margin-bottom: 12px;
             color: #e74c3c;
         }
         
         .boxes-container {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(500px, 1fr));
-            gap: 30px;
-            margin-top: 20px;
+            grid-template-columns: 1fr;
+            gap: 25px;
+            margin-top: 15px;
         }
         
-        @media (max-width: 768px) {
+        @media (min-width: 768px) {
             .boxes-container {
-                grid-template-columns: 1fr;
+                grid-template-columns: repeat(auto-fill, minmax(500px, 1fr));
             }
-            
-            .box-grid {
-                grid-template-columns: repeat(6, 1fr);
-                gap: 5px;
-            }
-            
-            .cell {
-                width: 55px;
-                height: 55px;
-                font-size: 0.8rem;
-            }
-            
-            .search-container {
-                flex-direction: column;
-                align-items: stretch;
-            }
-            
-            .search-btn {
-                width: 100%;
-                justify-content: center;
-            }
-            
-            .result-info {
-                flex-direction: column;
-                align-items: stretch;
-            }
-            
-            .info-item {
-                min-width: 100%;
+        }
+        
+        @media (min-width: 1200px) {
+            .boxes-container {
+                grid-template-columns: repeat(auto-fill, minmax(550px, 1fr));
             }
         }
         
         footer {
             text-align: center;
-            margin-top: 40px;
-            padding-top: 20px;
+            margin-top: 30px;
+            padding-top: 15px;
             color: #7f8c8d;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             border-top: 1px solid #e0e6ed;
         }
         
         .color-info {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            margin-top: 10px;
-        }
-        
-        .color-swatch {
-            width: 30px;
-            height: 30px;
-            border-radius: 4px;
-            border: 1px solid #ddd;
+            display: none; /* 隐藏颜色信息 */
         }
         
         .info-icon {
-            font-size: 1.2rem;
+            font-size: 1rem;
             opacity: 0.7;
         }
         
@@ -490,6 +564,57 @@
         
         .col-icon {
             color: #2ecc71;
+        }
+        
+        /* 移动端按钮操作区域 */
+        .mobile-actions {
+            display: flex;
+            gap: 10px;
+            width: 100%;
+            margin-top: 10px;
+        }
+        
+        @media (min-width: 576px) {
+            .mobile-actions {
+                width: auto;
+                margin-top: 0;
+            }
+        }
+        
+        /* 触摸优化 */
+        button, .example span, .history-item {
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
+        }
+        
+        /* 防止iOS缩放 */
+        input, select, textarea {
+            font-size: 16px;
+        }
+        
+        /* 长按优化 */
+        .cell {
+            -webkit-user-select: none;
+            user-select: none;
+        }
+        
+        /* 重置按钮样式调整 */
+        #resetBtn {
+            background-color: #95a5a6;
+            display: none;
+        }
+        
+        #resetBtn:hover {
+            background-color: #7f8c8d;
+        }
+        
+        /* 移除颜色色块 */
+        .color-swatch {
+            display: none;
+        }
+        
+        #colorHex {
+            display: none;
         }
     </style>
 </head>
@@ -508,15 +633,20 @@
                         <i class="fas fa-times"></i>
                     </button>
                 </div>
-                <button class="search-btn" id="searchBtn">
-                    <i class="fas fa-search"></i> 查找色号
-                </button>
+                <div class="mobile-actions">
+                    <button class="search-btn" id="searchBtn">
+                        <i class="fas fa-search"></i> 查找色号
+                    </button>
+                    <button class="search-btn" id="resetBtn">
+                        <i class="fas fa-redo"></i> 重置
+                    </button>
+                </div>
             </div>
             <p class="example">示例色号: 
-                <span onclick="searchExample('C2')">C2</span>, 
-                <span onclick="searchExample('D16')">D16</span>, 
-                <span onclick="searchExample('M5')">M5</span>, 
-                <span onclick="searchExample('F10')">F10</span>,
+                <span onclick="searchExample('C2')">C2</span>
+                <span onclick="searchExample('D16')">D16</span>
+                <span onclick="searchExample('M5')">M5</span>
+                <span onclick="searchExample('F10')">F10</span>
                 <span onclick="searchExample('B10')">B10</span>
             </p>
         </section>
@@ -535,17 +665,13 @@
         
         <section class="results-section" id="resultsSection">
             <div class="results-header">
-                <h2 class="result-title">查找结果：色号 <span class="result-color" id="resultColor">C2</span></h2>
-                <div class="color-info">
-                    <div class="color-swatch" id="colorSwatch"></div>
-                    <span id="colorHex">#ABF8FE</span>
+                <div class="result-title-container">
+                    <!-- 查找结果区域左对齐，只显示色号 -->
+                    <h2 class="result-title">查找结果：<span class="result-color" id="resultColor">C2</span></h2>
                 </div>
-                <button class="search-btn" id="resetBtn">
-                    <i class="fas fa-redo"></i> 重新查找
-                </button>
             </div>
             
-            <!-- 精简后的结果信息区域（只显示盒子、行数、列数） -->
+            <!-- 结果信息区域 - 紧凑布局左对齐 -->
             <div class="result-info" id="resultInfo">
                 <div class="info-item">
                     <div class="info-label">所在盒子</div>
@@ -569,9 +695,6 @@
                     </div>
                 </div>
             </div>
-            
-            <!-- 颜色预览区域 -->
-            <div class="color-preview" id="colorPreview"></div>
             
             <div class="visualization-section" id="visualization">
                 <!-- 可视化内容将通过JS动态生成 -->
@@ -635,7 +758,7 @@
             '11': [['F15','F19','G20','E21','E22','D26'],['F25','F20','G19','F18','G21','E23'],['D25','D22','D24','C20','B21','B25'],['H16','B23','C18','B22','C19','C26']]
         };
 
-        // 色号颜色数据（从Excel提取）
+        // 色号颜色数据（从Excel提取）- 仍然保留用于历史记录显示
         const COLOR_DATA = {
             // A系列色号
             'A1': '#FAF5CD', 'A2': '#FCFED6', 'A3': '#FCFF92', 'A4': '#F7EC5C', 'A5': '#F0D83A',
@@ -714,9 +837,6 @@
         const clearHistoryBtn = document.getElementById('clearHistoryBtn');
         const resultsSection = document.getElementById('resultsSection');
         const resultColor = document.getElementById('resultColor');
-        const colorSwatch = document.getElementById('colorSwatch');
-        const colorHex = document.getElementById('colorHex');
-        const colorPreview = document.getElementById('colorPreview');
         const infoBox = document.getElementById('infoBox');
         const infoRow = document.getElementById('infoRow');
         const infoCol = document.getElementById('infoCol');
@@ -794,6 +914,12 @@
                     displayResult(item.color);
                     updateClearButton();
                 });
+                historyItem.addEventListener('touchstart', function(e) {
+                    this.style.transform = 'scale(0.98)';
+                });
+                historyItem.addEventListener('touchend', function(e) {
+                    this.style.transform = '';
+                });
                 historyItems.appendChild(historyItem);
             });
         }
@@ -811,9 +937,11 @@
         // 更新清除按钮显示
         function updateClearButton() {
             if (colorInput.value.trim() !== '') {
-                clearSearchBtn.style.display = 'block';
+                clearSearchBtn.style.display = 'flex';
+                resetBtn.style.display = 'flex';
             } else {
                 clearSearchBtn.style.display = 'none';
+                resetBtn.style.display = 'none';
             }
         }
         
@@ -824,6 +952,14 @@
             updateClearButton();
             // 清空搜索框时显示所有盒子
             showAllBoxesInOrder();
+            resultsSection.style.display = 'none';
+        }
+        
+        // 重置功能
+        function resetSearch() {
+            colorInput.value = '';
+            colorInput.focus();
+            updateClearButton();
             resultsSection.style.display = 'none';
         }
         
@@ -881,7 +1017,7 @@
             return brightness > 128 ? '#333333' : '#FFFFFF';
         }
 
-        // 创建盒子可视化（移除了行标签和列标签）
+        // 创建盒子可视化 - 简化版，只显示色号
         function createBoxVisualization(boxName, targetColor, targetRow, targetCol, highlightOnlyTarget = false) {
             const boxData = BOX_DATA[boxName];
             const boxWrapper = document.createElement('div');
@@ -893,7 +1029,7 @@
             boxTitle.textContent = `盒子 ${boxName}`;
             boxWrapper.appendChild(boxTitle);
             
-            // 创建网格（移除了行标签和列标签）
+            // 创建网格
             const boxGrid = document.createElement('div');
             boxGrid.className = 'box-grid';
             
@@ -912,13 +1048,6 @@
                         cell.style.backgroundColor = hexColor;
                         cell.style.color = getContrastColor(hexColor);
                         
-                        // 添加HEX值
-                        const hexSpan = document.createElement('div');
-                        hexSpan.className = 'cell-hex';
-                        hexSpan.textContent = hexColor;
-                        hexSpan.style.color = getContrastColor(hexColor);
-                        cell.appendChild(hexSpan);
-                        
                         // 如果是目标色号，添加特殊样式
                         if (targetColor && targetColor === colorCode && targetRow === r+1 && targetCol === c+1) {
                             cell.classList.add('target-cell');
@@ -928,7 +1057,7 @@
                         cell.textContent = '空';
                     }
                     
-                    // 添加坐标信息（保留坐标信息但可以隐藏）
+                    // 添加坐标信息
                     const coord = document.createElement('div');
                     coord.className = 'coordinates';
                     coord.textContent = `${r+1},${c+1}`;
@@ -949,16 +1078,10 @@
             
             // 更新结果标题为显示所有盒子
             resultColor.textContent = '所有盒子';
+            resultColor.style.backgroundColor = '#3498db';
             infoBox.textContent = '全部';
             infoRow.textContent = '--';
             infoCol.textContent = '--';
-            
-            // 重置颜色显示
-            colorSwatch.style.backgroundColor = '#FFFFFF';
-            colorHex.textContent = '所有颜色';
-            colorPreview.style.backgroundColor = '#F5F7FA';
-            colorPreview.textContent = '显示所有盒子';
-            colorPreview.style.color = '#333333';
             
             // 创建所有盒子的可视化
             const boxesContainer = document.createElement('div');
@@ -1011,19 +1134,12 @@
             saveHistory(color, result);
             
             if (result) {
-                // 更新结果显示
+                // 更新结果显示 - 只显示色号
                 resultColor.textContent = color.toUpperCase();
+                resultColor.style.backgroundColor = '#3498db';
                 infoBox.textContent = result.box;
                 infoRow.textContent = result.row;
                 infoCol.textContent = result.col;
-                
-                // 更新颜色显示
-                const hexColor = result.hex;
-                colorSwatch.style.backgroundColor = hexColor;
-                colorHex.textContent = hexColor;
-                colorPreview.style.backgroundColor = hexColor;
-                colorPreview.textContent = hexColor;
-                colorPreview.style.color = getContrastColor(hexColor);
                 
                 // 显示目标盒子的可视化
                 showBoxesForResult(result);
@@ -1045,16 +1161,10 @@
                 
                 // 更新结果显示为未找到
                 resultColor.textContent = color.toUpperCase();
+                resultColor.style.backgroundColor = '#e74c3c';
                 infoBox.textContent = '未找到';
                 infoRow.textContent = '--';
                 infoCol.textContent = '--';
-                
-                // 重置颜色显示
-                colorSwatch.style.backgroundColor = '#CCCCCC';
-                colorHex.textContent = '#CCCCCC';
-                colorPreview.style.backgroundColor = '#CCCCCC';
-                colorPreview.textContent = '未找到色号';
-                colorPreview.style.color = '#333333';
                 
                 // 显示结果区域
                 resultsSection.style.display = 'block';
@@ -1080,6 +1190,14 @@
             }
         });
 
+        searchBtn.addEventListener('touchstart', function(e) {
+            this.style.transform = 'scale(0.98)';
+        });
+        
+        searchBtn.addEventListener('touchend', function(e) {
+            this.style.transform = '';
+        });
+
         colorInput.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') {
                 searchBtn.click();
@@ -1090,12 +1208,7 @@
         
         clearSearchBtn.addEventListener('click', clearSearch);
         
-        resetBtn.addEventListener('click', () => {
-            colorInput.value = '';
-            colorInput.focus();
-            updateClearButton();
-            resultsSection.style.display = 'none';
-        });
+        resetBtn.addEventListener('click', resetSearch);
 
         clearHistoryBtn.addEventListener('click', clearHistory);
 
@@ -1112,6 +1225,27 @@
             
             // 初始更新清除按钮状态
             updateClearButton();
+            
+            // 添加触摸优化
+            document.querySelectorAll('button, .example span').forEach(el => {
+                el.addEventListener('touchstart', function() {
+                    this.style.transform = 'scale(0.98)';
+                });
+                el.addEventListener('touchend', function() {
+                    this.style.transform = '';
+                });
+            });
+        });
+        
+        // 窗口大小变化时调整布局
+        window.addEventListener('resize', function() {
+            // 如果正在显示搜索结果，重新渲染可视化
+            if (resultsSection.style.display === 'block' && resultColor.textContent !== '所有盒子') {
+                const currentColor = colorInput.value.trim();
+                if (currentColor) {
+                    displayResult(currentColor);
+                }
+            }
         });
     </script>
 </body>
