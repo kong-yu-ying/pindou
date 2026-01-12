@@ -178,6 +178,14 @@
             background-color: #e8f4fc;
         }
         
+        /* 多色号提示 */
+        .multi-color-hint {
+            margin-top: 8px;
+            color: #3498db;
+            font-size: 0.85rem;
+            font-style: italic;
+        }
+        
         .history-section {
             background-color: white;
             border-radius: 10px;
@@ -317,14 +325,53 @@
             text-align: center;
         }
         
+        /* 多色号结果展示 */
+        .multi-result-container {
+            margin-bottom: 20px;
+        }
+        
+        .multi-result-item {
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-left: 4px solid #3498db;
+        }
+        
+        .multi-result-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .multi-result-color {
+            font-weight: bold;
+            color: #ffffff;
+            background-color: #3498db;
+            padding: 4px 10px;
+            border-radius: 6px;
+            display: inline-block;
+            font-size: 1.1rem;
+        }
+        
+        .multi-result-not-found {
+            color: #e74c3c;
+            font-weight: bold;
+            padding: 4px 10px;
+            background-color: #fdeaea;
+            border-radius: 6px;
+            display: inline-block;
+        }
+        
         /* 结果信息区域 - 紧凑布局左对齐 */
         .result-info {
             display: flex;
             flex-direction: row;
             flex-wrap: nowrap;
             gap: 10px;
-            margin-bottom: 20px;
-            background-color: #f8f9fa;
+            background-color: white;
             padding: 15px;
             border-radius: 8px;
             justify-content: flex-start;
@@ -358,7 +405,7 @@
             flex-direction: column;
             align-items: center;
             padding: 10px 15px;
-            background-color: white;
+            background-color: #f8f9fa;
             border-radius: 8px;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
             flex: 0 0 auto;
@@ -395,11 +442,6 @@
             align-items: center;
             gap: 4px;
             white-space: nowrap;
-        }
-        
-        /* 移除颜色预览区域 */
-        .color-preview {
-            display: none;
         }
         
         .visualization-section {
@@ -481,11 +523,6 @@
             z-index: 2;
         }
         
-        /* 移除单元格中的HEX代码显示 */
-        .cell-hex {
-            display: none;
-        }
-        
         .coordinates {
             position: absolute;
             bottom: 3px;
@@ -542,10 +579,6 @@
             color: #7f8c8d;
             font-size: 0.85rem;
             border-top: 1px solid #e0e6ed;
-        }
-        
-        .color-info {
-            display: none; /* 隐藏颜色信息 */
         }
         
         .info-icon {
@@ -607,28 +640,19 @@
         #resetBtn:hover {
             background-color: #7f8c8d;
         }
-        
-        /* 移除颜色色块 */
-        .color-swatch {
-            display: none;
-        }
-        
-        #colorHex {
-            display: none;
-        }
     </style>
 </head>
 <body>
     <div class="container">
         <header>
             <h1><i class="fas fa-palette"></i> 拼豆色号查找工具</h1>
-            <p class="subtitle">Mard264色 - 带颜色显示的色号查找工具</p>
+            <p class="subtitle">Mard264色 - 多色号查询工具</p>
         </header>
         
         <section class="search-section">
             <div class="search-container">
                 <div class="search-input-wrapper">
-                    <input type="text" class="search-input" id="colorInput" placeholder="输入拼豆色号，例如：C2, D16, M5..." autofocus>
+                    <input type="text" class="search-input" id="colorInput" placeholder="输入拼豆色号，例如：C2 或 C2,D16,M5..." autofocus>
                     <button class="clear-search" id="clearSearchBtn">
                         <i class="fas fa-times"></i>
                     </button>
@@ -649,6 +673,7 @@
                 <span onclick="searchExample('F10')">F10</span>
                 <span onclick="searchExample('B10')">B10</span>
             </p>
+            <p class="multi-color-hint">提示：支持同时查询多个色号，用逗号、空格或换行分隔</p>
         </section>
         
         <section class="history-section" id="historySection">
@@ -667,33 +692,13 @@
             <div class="results-header">
                 <div class="result-title-container">
                     <!-- 查找结果区域左对齐，只显示色号 -->
-                    <h2 class="result-title">查找结果：<span class="result-color" id="resultColor">C2</span></h2>
+                    <h2 class="result-title" id="resultTitle">查找结果</h2>
                 </div>
             </div>
             
-            <!-- 结果信息区域 - 紧凑布局左对齐 -->
-            <div class="result-info" id="resultInfo">
-                <div class="info-item">
-                    <div class="info-label">所在盒子</div>
-                    <div class="info-value">
-                        <i class="fas fa-box info-icon box-icon"></i>
-                        <span id="infoBox">A</span>
-                    </div>
-                </div>
-                <div class="info-item">
-                    <div class="info-label">所在行数</div>
-                    <div class="info-value">
-                        <i class="fas fa-grip-lines-vertical info-icon row-icon"></i>
-                        <span id="infoRow">1</span>
-                    </div>
-                </div>
-                <div class="info-item">
-                    <div class="info-label">所在列数</div>
-                    <div class="info-value">
-                        <i class="fas fa-grip-lines info-icon col-icon"></i>
-                        <span id="infoCol">2</span>
-                    </div>
-                </div>
+            <!-- 多色号结果容器 -->
+            <div class="multi-result-container" id="multiResultContainer">
+                <!-- 多色号结果将通过JS动态生成 -->
             </div>
             
             <div class="visualization-section" id="visualization">
@@ -748,8 +753,13 @@
             // 盒子8
             '8': [['P10','R11','Y2','Y3','Q2','Y4'],['Y5','Y1','R3','R4','R5','R8'],['R9','R2','R1','R10','R6','R7'],['D10','R13','Q5','B9','C12','D4']],
             
-            // 盒子9
-            '9': [['H17','H18','H19','E16','F16','F17'],['D23','E24','E19','E18','E17','E20'],['B23','A16','A17','A18','F24','F23'],['A24','A22','A21','F21','F22','A19']],
+            // 盒子9 - 修复：将B23改为B24
+            '9': [
+                ['H17','H18','H19','E16','F16','F17'],
+                ['D23','E24','E19','E18','E17','E20'],
+                ['B24','A16','A17','A18','F24','F23'], // 这里B23改为B24
+                ['A24','A22','A21','F21','F22','A19']
+            ],
             
             // 盒子10
             '10': [['A26','A25','A20','A23','G18','H21'],['B26','B32','B31','B30','B27','B29'],['C22','C23','C24','B28','C25','C27'],['H15','H20','H23','H22','C28','C21']],
@@ -836,10 +846,8 @@
         const historyItems = document.getElementById('historyItems');
         const clearHistoryBtn = document.getElementById('clearHistoryBtn');
         const resultsSection = document.getElementById('resultsSection');
-        const resultColor = document.getElementById('resultColor');
-        const infoBox = document.getElementById('infoBox');
-        const infoRow = document.getElementById('infoRow');
-        const infoCol = document.getElementById('infoCol');
+        const resultTitle = document.getElementById('resultTitle');
+        const multiResultContainer = document.getElementById('multiResultContainer');
         const visualization = document.getElementById('visualization');
 
         // 历史记录管理
@@ -863,24 +871,33 @@
             }
         }
         
-        // 保存历史记录
-        function saveHistory(color, result) {
-            // 移除重复项
-            searchHistory = searchHistory.filter(item => item.color !== color);
+        // 保存历史记录 - 修复多色号保存问题
+        function saveHistory(colors, results) {
+            // 如果是单个色号，转换为数组
+            const colorArray = Array.isArray(colors) ? colors : [colors];
+            const resultArray = Array.isArray(results) ? results : [results];
             
-            // 添加到历史记录开头
-            searchHistory.unshift({
-                color: color,
-                hex: result?.hex || COLOR_DATA[color] || '#CCCCCC',
-                timestamp: new Date().getTime(),
-                result: result ? {
-                    box: result.box,
-                    row: result.row,
-                    col: result.col
-                } : null
+            // 为每个色号保存历史记录
+            colorArray.forEach((color, index) => {
+                const result = resultArray[index] || null;
+                
+                // 移除重复项
+                searchHistory = searchHistory.filter(item => item.color !== color);
+                
+                // 添加到历史记录开头
+                searchHistory.unshift({
+                    color: color,
+                    hex: result?.hex || COLOR_DATA[color] || '#CCCCCC',
+                    timestamp: new Date().getTime(),
+                    result: result ? {
+                        box: result.box,
+                        row: result.row,
+                        col: result.col
+                    } : null
+                });
             });
             
-            // 只保留最近10条
+            // 只保留最近10条（按时间排序后）
             if (searchHistory.length > 10) {
                 searchHistory = searchHistory.slice(0, 10);
             }
@@ -890,7 +907,9 @@
             
             // 更新显示
             updateHistoryDisplay();
-            historySection.style.display = 'block';
+            if (searchHistory.length > 0) {
+                historySection.style.display = 'block';
+            }
         }
         
         // 更新历史记录显示
@@ -963,7 +982,7 @@
             resultsSection.style.display = 'none';
         }
         
-        // 查找色号函数
+        // 查找色号函数 - 支持单个色号查询
         function findColor(color) {
             const normalizedColor = color.trim().toUpperCase();
             let result = null;
@@ -996,7 +1015,18 @@
             
             return result;
         }
-
+        
+        // 解析多个色号
+        function parseMultipleColors(input) {
+            // 使用逗号、空格、换行符分隔
+            const colors = input.split(/[,，\s\n]+/)
+                .map(color => color.trim().toUpperCase())
+                .filter(color => color.length > 0);
+            
+            // 去重
+            return [...new Set(colors)];
+        }
+        
         // 根据颜色代码确定文字颜色（确保对比度）
         function getContrastColor(hexColor) {
             // 如果是无效颜色，返回黑色
@@ -1018,7 +1048,7 @@
         }
 
         // 创建盒子可视化 - 简化版，只显示色号
-        function createBoxVisualization(boxName, targetColor, targetRow, targetCol, highlightOnlyTarget = false) {
+        function createBoxVisualization(boxName, targetColors = [], highlightOnlyTarget = false) {
             const boxData = BOX_DATA[boxName];
             const boxWrapper = document.createElement('div');
             boxWrapper.className = 'box-wrapper';
@@ -1049,7 +1079,7 @@
                         cell.style.color = getContrastColor(hexColor);
                         
                         // 如果是目标色号，添加特殊样式
-                        if (targetColor && targetColor === colorCode && targetRow === r+1 && targetCol === c+1) {
+                        if (targetColors.includes(colorCode)) {
                             cell.classList.add('target-cell');
                         }
                     } else {
@@ -1077,11 +1107,10 @@
             resultsSection.style.display = 'block';
             
             // 更新结果标题为显示所有盒子
-            resultColor.textContent = '所有盒子';
-            resultColor.style.backgroundColor = '#3498db';
-            infoBox.textContent = '全部';
-            infoRow.textContent = '--';
-            infoCol.textContent = '--';
+            resultTitle.innerHTML = '查找结果：<span class="result-color">所有盒子</span>';
+            
+            // 清空多色号结果容器
+            multiResultContainer.innerHTML = '';
             
             // 创建所有盒子的可视化
             const boxesContainer = document.createElement('div');
@@ -1103,73 +1132,141 @@
             resultsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
 
-        // 显示指定盒子的可视化
-        function showBoxesForResult(targetResult) {
-            visualization.innerHTML = '';
+        // 显示查找结果 - 支持多色号
+        function displayResult(input) {
+            // 解析多个色号
+            const colors = parseMultipleColors(input);
             
-            if (!targetResult) return;
+            if (colors.length === 0) {
+                // 如果没有有效色号，显示所有盒子
+                showAllBoxesInOrder();
+                return;
+            }
             
-            // 创建所有盒子的可视化
-            const boxesContainer = document.createElement('div');
-            boxesContainer.className = 'boxes-container';
+            // 查找所有色号的结果
+            const results = colors.map(color => {
+                return {
+                    color: color,
+                    result: findColor(color)
+                };
+            });
             
-            // 只显示目标盒子
-            const boxViz = createBoxVisualization(
-                targetResult.box, 
-                targetResult.color,
-                targetResult.row,
-                targetResult.col,
-                true
-            );
-            boxesContainer.appendChild(boxViz);
+            // 保存到历史记录（保存所有色号）
+            if (colors.length > 0) {
+                saveHistory(colors, results.map(r => r.result));
+            }
             
-            visualization.appendChild(boxesContainer);
-        }
-
-        // 显示查找结果
-        function displayResult(color) {
-            const result = findColor(color);
-            
-            // 保存到历史记录
-            saveHistory(color, result);
-            
-            if (result) {
-                // 更新结果显示 - 只显示色号
-                resultColor.textContent = color.toUpperCase();
-                resultColor.style.backgroundColor = '#3498db';
-                infoBox.textContent = result.box;
-                infoRow.textContent = result.row;
-                infoCol.textContent = result.col;
-                
-                // 显示目标盒子的可视化
-                showBoxesForResult(result);
-                
-                // 显示结果区域
-                resultsSection.style.display = 'block';
-                
-                // 滚动到结果区域
-                resultsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            // 更新结果标题
+            if (colors.length === 1) {
+                resultTitle.innerHTML = `查找结果：<span class="result-color">${colors[0]}</span>`;
             } else {
-                // 没有找到色号
+                resultTitle.innerHTML = `查找结果：${colors.length}个色号`;
+            }
+            
+            // 清空多色号结果容器
+            multiResultContainer.innerHTML = '';
+            
+            // 显示所有色号的结果
+            const foundColors = [];
+            
+            results.forEach(item => {
+                const resultItem = document.createElement('div');
+                resultItem.className = 'multi-result-item';
+                
+                if (item.result) {
+                    // 找到色号
+                    foundColors.push(item.color);
+                    
+                    resultItem.innerHTML = `
+                        <div class="multi-result-header">
+                            <div class="multi-result-color">${item.color}</div>
+                        </div>
+                        <div class="result-info">
+                            <div class="info-item">
+                                <div class="info-label">所在盒子</div>
+                                <div class="info-value">
+                                    <i class="fas fa-box info-icon box-icon"></i>
+                                    <span>${item.result.box}</span>
+                                </div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">所在行数</div>
+                                <div class="info-value">
+                                    <i class="fas fa-grip-lines-vertical info-icon row-icon"></i>
+                                    <span>${item.result.row}</span>
+                                </div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">所在列数</div>
+                                <div class="info-value">
+                                    <i class="fas fa-grip-lines info-icon col-icon"></i>
+                                    <span>${item.result.col}</span>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    // 未找到色号
+                    resultItem.innerHTML = `
+                        <div class="multi-result-header">
+                            <div class="multi-result-not-found">${item.color}</div>
+                            <span>未找到该色号</span>
+                        </div>
+                    `;
+                    resultItem.style.borderLeftColor = '#e74c3c';
+                }
+                
+                multiResultContainer.appendChild(resultItem);
+            });
+            
+            // 显示目标盒子的可视化
+            if (foundColors.length > 0) {
+                // 收集所有找到色号所在的盒子
+                const boxesWithTargets = {};
+                
+                results.forEach(item => {
+                    if (item.result) {
+                        const boxName = item.result.box;
+                        if (!boxesWithTargets[boxName]) {
+                            boxesWithTargets[boxName] = [];
+                        }
+                        boxesWithTargets[boxName].push(item.color);
+                    }
+                });
+                
+                visualization.innerHTML = '';
+                
+                // 创建所有包含目标色号的盒子可视化
+                const boxesContainer = document.createElement('div');
+                boxesContainer.className = 'boxes-container';
+                
+                // 按照A-E, 6-11的顺序显示盒子
+                const boxOrder = ['A', 'B', 'C', 'D', 'E', '6', '7', '8', '9', '10', '11'];
+                
+                boxOrder.forEach(boxName => {
+                    if (BOX_DATA[boxName] && boxesWithTargets[boxName]) {
+                        const boxViz = createBoxVisualization(boxName, boxesWithTargets[boxName], true);
+                        boxesContainer.appendChild(boxViz);
+                    }
+                });
+                
+                visualization.appendChild(boxesContainer);
+            } else {
+                // 没有找到任何色号
                 visualization.innerHTML = `
                     <div class="no-results">
                         <i class="fas fa-times-circle"></i>
-                        <h3>未找到色号 "${color.toUpperCase()}"</h3>
+                        <h3>未找到任何色号</h3>
                         <p>请检查拼豆色号是否正确，或尝试其他色号。</p>
                     </div>
                 `;
-                
-                // 更新结果显示为未找到
-                resultColor.textContent = color.toUpperCase();
-                resultColor.style.backgroundColor = '#e74c3c';
-                infoBox.textContent = '未找到';
-                infoRow.textContent = '--';
-                infoCol.textContent = '--';
-                
-                // 显示结果区域
-                resultsSection.style.display = 'block';
-                resultsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
             }
+            
+            // 显示结果区域
+            resultsSection.style.display = 'block';
+            
+            // 滚动到结果区域
+            resultsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
         
         // 示例搜索函数
@@ -1181,9 +1278,9 @@
 
         // 事件监听器
         searchBtn.addEventListener('click', () => {
-            const color = colorInput.value.trim();
-            if (color) {
-                displayResult(color);
+            const input = colorInput.value.trim();
+            if (input) {
+                displayResult(input);
             } else {
                 // 搜索框为空时显示所有盒子
                 showAllBoxesInOrder();
@@ -1237,16 +1334,8 @@
             });
         });
         
-        // 窗口大小变化时调整布局
-        window.addEventListener('resize', function() {
-            // 如果正在显示搜索结果，重新渲染可视化
-            if (resultsSection.style.display === 'block' && resultColor.textContent !== '所有盒子') {
-                const currentColor = colorInput.value.trim();
-                if (currentColor) {
-                    displayResult(currentColor);
-                }
-            }
-        });
+        // 移除窗口大小变化时的重新渲染功能
+        // 不再需要此功能，简化代码
     </script>
 </body>
 </html>
